@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Request</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
+        button { padding: 15px 30px; font-size: 18px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
+        #output { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2>Click to Share Your Location</h2>
+    <button onclick="getLocation()">Share My Location</button>
+    <p id="output"></p>
+
+    <script>
+        function getLocation() {
+            if (!navigator.geolocation) {
+                document.getElementById("output").innerHTML = "Geolocation is not supported by your browser.";
+                return;
+            }
+
+            document.getElementById("output").innerHTML = "Locating...";
+
+            navigator.geolocation.getCurrentPosition(
+                // Success callback
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const accuracy = position.coords.accuracy; // Accuracy in meters
+                    
+                    // Link to Google Maps
+                    const mapLink = `<a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank">View on Google Maps</a>`;
+                    
+                    document.getElementById("output").innerHTML = 
+                        `Latitude: ${lat.toFixed(6)}<br>Longitude: ${lon.toFixed(6)}<br>` +
+                        `Accuracy: ±${Math.round(accuracy)} meters<br><br>` +
+                        `${mapLink}`;
+                        
+                    // Optional: Send this data to your server/email here via AJAX/Fetch
+                },
+                // Error callback
+                function(error) {
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            document.getElementById("output").innerHTML = "User denied the request for Geolocation.";
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            document.getElementById("output").innerHTML = "Location information is unavailable.";
+                            break;
+                        case error.TIMEOUT:
+                            document.getElementById("output").innerHTML = "The request to get user location timed out.";
+                            break;
+                        default:
+                            document.getElementById("output").innerHTML = "An unknown error occurred.";
+                            break;
+                    }
+                }
+            );
+        }
+    </script>
+
+</body>
+</html>
